@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cal1co/go-limit/leakybucket"
+	"github.com/cal1co/go-limit/slidingwindow"
 )
 
 func main() {
@@ -15,15 +15,16 @@ func main() {
 
 	// bucket.WaitToConsume()
 	// fmt.Println("awaited")
-	bucket := leakybucket.NewLeakyBucket(100*time.Millisecond, 5, "example")
-	for i := 0; i < 20; i++ {
-		// fmt.Println("bucket", bucket.IsEmpty())
-		if err := bucket.Consume(); err != nil {
-			fmt.Printf("Leaky Bucket: %v\n", err)
-			time.Sleep(100 * time.Millisecond)
+	limiter := slidingwindow.NewSlidingWindow(5*time.Second, 3)
+
+	for i := 0; i < 10; i++ {
+		if err := limiter.Consume(); err != nil {
+			fmt.Printf("Sliding window: %v\n", err)
+			time.Sleep(1 * time.Second)
 			continue
 		}
-		fmt.Println("consuming")
-		time.Sleep(50 * time.Millisecond)
+		fmt.Println("consume success")
+
+		time.Sleep(1 * time.Second)
 	}
 }
