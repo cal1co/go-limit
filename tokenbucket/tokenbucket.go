@@ -68,6 +68,13 @@ func (b *Bucket) GetRate() time.Duration {
 	return rate
 }
 
-func (b *Bucket) BucketIsEmpty() bool {
+func (b *Bucket) SetRate(rate time.Duration) {
+	b.rateMutex.Lock()
+	defer b.rateMutex.Unlock()
+
+	b.rate = rate
+}
+
+func (b *Bucket) IsEmpty() bool {
 	return len(b.tokens) == 0
 }

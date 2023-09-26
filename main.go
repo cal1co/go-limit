@@ -10,7 +10,7 @@ import (
 func main() {
 	fmt.Println("hello!")
 
-	bucket := tokenbucket.NewTokenBucket(100*time.Millisecond, 10, "example")
+	bucket := tokenbucket.NewTokenBucket(100*time.Millisecond /* refill rate*/, 10 /* capacity */, "example" /* id */)
 	// bucket.Fill()
 
 	bucket.WaitToConsume()

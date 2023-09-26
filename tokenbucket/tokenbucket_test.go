@@ -13,7 +13,7 @@ func TestBucketIsEmpty(t *testing.T) {
 	id := "testBucket"
 	bucket := NewTokenBucket(rate, capacity, id)
 
-	isEmpty := bucket.BucketIsEmpty()
+	isEmpty := bucket.IsEmpty()
 	assert.True(t, isEmpty, "Bucket should be empty initially.")
 }
 
