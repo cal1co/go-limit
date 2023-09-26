@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cal1co/go-limit/slidingwindow"
+	"github.com/cal1co/go-limit/fixedwindow"
 )
 
 func main() {
@@ -15,11 +15,11 @@ func main() {
 
 	// bucket.WaitToConsume()
 	// fmt.Println("awaited")
-	limiter := slidingwindow.NewSlidingWindow(5*time.Second, 3)
+	limiter := fixedwindow.NewFixedWindow(5*time.Second, 3)
 
 	for i := 0; i < 10; i++ {
 		if err := limiter.Consume(); err != nil {
-			fmt.Printf("Sliding window: %v\n", err)
+			fmt.Printf("fixed window: %v\n", err)
 			time.Sleep(1 * time.Second)
 			continue
 		}
