@@ -34,16 +34,20 @@ func NewTokenBucket(rate time.Duration, capacity int, id string) *Bucket {
 	return b
 }
 
-func (b *Bucket) FillBucket() *Bucket {
+func (b *Bucket) Fill() *Bucket {
 	for i := 0; i < b.capacity; i++ {
-		b.tokens <- struct{}{}
+		select {
+		case b.tokens <- struct{}{}:
+		default:
+			return b
+		}
 	}
 	return b
 }
 
 var ErrTokenBucketRateLimitExceeded = errors.New("bucket empty")
 
-func (b *Bucket) ConsumeTokens() error {
+func (b *Bucket) Consume() error {
 	select {
 	case <-b.tokens:
 		return nil
@@ -52,9 +56,14 @@ func (b *Bucket) ConsumeTokens() error {
 	}
 }
 
+func (b *Bucket) WaitToConsume() {
+	<-b.tokens
+}
+
 func (b *Bucket) GetRate() time.Duration {
 	b.rateMutex.Lock()
 	defer b.rateMutex.Unlock()
+
 	rate := b.rate
 	return rate
 }
