@@ -23,7 +23,6 @@ type Bucket struct {
 func NewTokenBucket(rate time.Duration, capacity int, id string) *Bucket {
 	txns := make(chan struct{}, capacity)
 	b := &Bucket{id, txns, capacity, rate, sync.Mutex{}}
-	b.fillBucket()
 
 	go func(b *Bucket) {
 		ticker := time.NewTicker(rate)
@@ -35,21 +34,21 @@ func NewTokenBucket(rate time.Duration, capacity int, id string) *Bucket {
 	return b
 }
 
-func (b *Bucket) fillBucket() *Bucket {
+func (b *Bucket) FillBucket() *Bucket {
 	for i := 0; i < b.capacity; i++ {
 		b.tokens <- struct{}{}
 	}
 	return b
 }
 
-var TokenBucketRateLimitExceeded = errors.New("bucket empty")
+var ErrTokenBucketRateLimitExceeded = errors.New("bucket empty")
 
-func (b *Bucket) ConsumeTokens(tkn int) error {
+func (b *Bucket) ConsumeTokens() error {
 	select {
 	case <-b.tokens:
 		return nil
 	default:
-		return TokenBucketRateLimitExceeded
+		return ErrTokenBucketRateLimitExceeded
 	}
 }
 
@@ -58,4 +57,8 @@ func (b *Bucket) GetRate() time.Duration {
 	defer b.rateMutex.Unlock()
 	rate := b.rate
 	return rate
+}
+
+func (b *Bucket) BucketIsEmpty() bool {
+	return len(b.tokens) == 0
 }
