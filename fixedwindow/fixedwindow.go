@@ -23,7 +23,7 @@ func NewFixedWindow(windowSize time.Duration, maxRequests int) *Limiter {
 	}
 }
 
-var ErrFixedWindowRateLimitExceeded = errors.New("rate limit exceeded")
+var ErrFixedWindowRateLimitExceeded = errors.New("rate exceeded within window")
 
 func (limiter *Limiter) Consume() error {
 	limiter.mu.Lock()
