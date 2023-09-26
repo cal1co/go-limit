@@ -6,12 +6,6 @@ import (
 	"time"
 )
 
-// tokens are added to a bucket at a regular interval
-// buckets have a maximum capacity
-// req can only be verified if there is a token
-// on req accept, token is removed
-// a bucket should have an id
-
 type Bucket struct {
 	id        string
 	tokens    chan struct{}
@@ -77,4 +71,8 @@ func (b *Bucket) SetRate(rate time.Duration) {
 
 func (b *Bucket) IsEmpty() bool {
 	return len(b.tokens) == 0
+}
+
+func (b *Bucket) IsFull() bool {
+	return len(b.tokens) == b.capacity
 }
