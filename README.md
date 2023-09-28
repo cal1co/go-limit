@@ -29,4 +29,4 @@ Refer to the documentation and test files within each subpackage for detailed us
 You can include this package in your Go project using `go get`:
 
 ```sh
-go get github.com/cal1co/rate_limiter
+go get github.com/cal1co/go-limit
